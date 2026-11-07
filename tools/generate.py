@@ -162,6 +162,22 @@ def main():
     with open(os.path.join(ROOT, "src/shared/Config/Items.lua"), "w") as f:
         f.write("\n".join(out))
 
+    # ---- MeshParts.lua: colours / ground attitude for high-fidelity meshes (blender/hifi)
+    mesh_parts = {}
+    models_dir = os.path.join(ROOT, "models")
+    for aid in sorted(os.listdir(models_dir)) if os.path.isdir(models_dir) else []:
+        pj = os.path.join(models_dir, aid, f"{aid}.parts.json")
+        if os.path.exists(pj):
+            with open(pj) as f:
+                info = json.load(f)
+            mesh_parts[aid] = {"groundPitch": info.get("groundPitch", 0.0),
+                               "parts": {k: [round(c, 3) for c in v["color"]] for k, v in info["parts"].items()}}
+    out = [HEADER, "-- Part colours and ground attitude for the high-fidelity meshes in models/<id>/.",
+           "-- Parts named Gear* are removed when the aircraft is flown.",
+           "return " + lua_value(mesh_parts) + "\n"]
+    with open(os.path.join(ROOT, "src/shared/Config/MeshParts.lua"), "w") as f:
+        f.write("\n".join(out))
+
     # ---- JSON for Blender
     with open(os.path.join(ROOT, "data/aircraft.json"), "w") as f:
         json.dump({"aircraft": AIRCRAFT, "eras": ERAS}, f, indent=1)

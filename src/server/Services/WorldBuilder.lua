@@ -283,7 +283,14 @@ function WorldBuilder.DisplayAircraft(plot: Model, spec, model: Model)
 			d.Anchored = true
 		end
 	end
-	model:PivotTo(bcf * CFrame.new(0, extents.Y / 2 + 1.5, 0))
+	local pitch = math.rad(model:GetAttribute("GroundPitch") or 0)
+	model:PivotTo(bcf * CFrame.Angles(pitch, 0, 0))
+	local bbCf, bbSize = model:GetBoundingBox()
+	local bottom = bbCf.Position.Y - bbSize.Y / 2
+	local floorY = bcf.Position.Y + 0.2
+	-- meshes with gear stand on their wheels; part-built models hover on a display stand height
+	local lift = (floorY - bottom) + (model:GetAttribute("HasGear") and 0 or 1.5)
+	model:PivotTo(model:GetPivot() + Vector3.new(0, lift, 0))
 	model.Parent = plot.Built
 	local root = model.PrimaryPart
 	label(root, spec.name, spec.premium and "BLACK PROJECT" or Aircraft.Eras[spec.era].name,

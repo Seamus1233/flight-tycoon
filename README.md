@@ -83,6 +83,27 @@ The game runs right away with aircraft built from Parts. To use the Blender mesh
 `AircraftBuilder` will use it automatically, with auto-scaling. The mesh named `Body` is
 recoloured per aircraft.
 
+## High-fidelity models (in progress)
+`blender/hifi/` builds aircraft from real data instead of a dozen parameters:
+- the fuselage is shaped from cross-sections at stations along its length
+- wings and tails use real NACA aerofoils, with the published chords and dihedral
+- props have twisted blades; intakes and exhausts are open; parts are coloured individually
+- landing gear is a separate part, removed when flying
+- each aircraft sits at its correct parked attitude (the P-51 stands 11.5° nose-up on its tailwheel)
+
+Done so far: **P-51D** and **A-10**, about 20k triangles each.
+
+```bash
+python3.11 blender/hifi/generate_hifi.py p51 a10 --renders docs/hifi --refs <dir with 3-view PNGs>
+python3 tools/generate.py   # picks up models/<id>/<id>.parts.json -> Config/MeshParts.lua
+```
+
+![P-51 before/after](docs/hifi/p51_before_after.png)
+![A-10 before/after](docs/hifi/a10_before_after.png)
+
+When you import the FBX into Studio, keep the part names (`Body`, `Canopy`, `Gear`, ...).
+The game colours each part from `Config/MeshParts.lua`.
+
 ## Regenerating the Blender models
 ```bash
 python3.11 -m pip install bpy

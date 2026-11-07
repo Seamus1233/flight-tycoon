@@ -15,6 +15,8 @@
 ]]
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local MeshParts = require(script.Parent.Config.MeshParts)
+
 local AircraftBuilder = {}
 
 local DETAIL_COLOR = Color3.fromRGB(32, 32, 36)
@@ -304,21 +306,38 @@ end
 --[[ Build an aircraft model.
 	spec       : entry from Config/Aircraft
 	targetSize : studs; the largest of length / span is scaled to this
-	Returns a Model whose PrimaryPart "Root" sits at the origin, facing -Z. ]]
-function AircraftBuilder.Build(spec, targetSize: number): Model
+	opts       : { flight = true } removes landing gear (parts named Gear*)
+	Returns a Model whose PrimaryPart "Root" sits at the origin, facing -Z.
+	Attribute "GroundPitch" (degrees, nose up) says how it sits on its gear. ]]
+function AircraftBuilder.Build(spec, targetSize: number, opts: any): Model
+	opts = opts or {}
 	local meshes = ReplicatedStorage:FindFirstChild("AircraftMeshes")
 	local template = meshes and meshes:FindFirstChild(spec.id)
+	local info = MeshParts[spec.id]
 	local model
 	if template and template:IsA("Model") then
 		model = template:Clone()
 		for _, d in ipairs(model:GetDescendants()) do
 			if d:IsA("BasePart") then
-				d.Anchored = false
-				d.CanCollide = false
-				d.CanQuery = false
-				d.CanTouch = false
-				if d.Name == "Body" then
-					d.Color = Color3.new(spec.color[1], spec.color[2], spec.color[3])
+				if opts.flight and string.sub(d.Name, 1, 4) == "Gear" then
+					d:Destroy()
+				else
+					d.Anchored = false
+					d.CanCollide = false
+					d.CanQuery = false
+					d.CanTouch = false
+					local c = info and info.parts[d.Name]
+					if c then
+						d.Color = Color3.new(c[1], c[2], c[3])
+						if d.Name == "Canopy" then
+							d.Material = Enum.Material.Glass
+							d.Transparency = 0.35
+						elseif d.Name == "Body" then
+							d.Material = Enum.Material.Metal
+						end
+					elseif d.Name == "Body" then
+						d.Color = Color3.new(spec.color[1], spec.color[2], spec.color[3])
+					end
 				end
 			end
 		end
@@ -333,7 +352,12 @@ function AircraftBuilder.Build(spec, targetSize: number): Model
 		local k = targetSize / math.max(spec.L, spec.S)
 		buildParts(spec, k, model)
 	end
-	return finalize(model, spec.id)
+	model = finalize(model, spec.id)
+	-- only real meshes have landing gear, so only they sit nose-up on the ground
+	local hasGear = template ~= nil and info ~= nil and not opts.flight
+	model:SetAttribute("HasGear", hasGear)
+	model:SetAttribute("GroundPitch", hasGear and info.groundPitch or 0)
+	return model
 end
 
 return AircraftBuilder

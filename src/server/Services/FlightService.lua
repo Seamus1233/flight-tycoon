@@ -58,7 +58,7 @@ function FlightService.Fly(player: Player, id: string)
 	despawn(player)
 
 	local size = math.min(math.max(spec.L, spec.S) * Game.FlightStudsPerMetre, Game.FlightMaxStuds)
-	local model = AircraftBuilder.Build(spec, size)
+	local model = AircraftBuilder.Build(spec, size, { flight = true })
 	local root = model.PrimaryPart
 	local extents: Vector3 = model:GetAttribute("Extents")
 	root.Size = Vector3.new(math.max(2, extents.X * 0.25), 2, math.max(4, extents.Z * 0.7))
