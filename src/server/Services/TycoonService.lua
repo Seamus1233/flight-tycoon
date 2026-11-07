@@ -425,7 +425,7 @@ local function onPlayerAdded(player: Player)
 	local st: State = { plot = plot, pads = {}, friends = 0, ready = false }
 	states[player] = st
 	player:SetAttribute("PlotIndex", index)
-	plot.OwnerSign.SurfaceGui.Owner.Text = string.upper(player.DisplayName) .. "'S AIRBASE"
+	plot.OwnerSign.SurfaceGui.Owner.Text = string.upper(player.DisplayName) .. "'S HANGAR"
 
 	local ls = Instance.new("Folder")
 	ls.Name = "leaderstats"
@@ -480,7 +480,7 @@ local function onPlayerRemoving(player: Player)
 		local index = st.plot:GetAttribute("Index")
 		st.plot.Built:ClearAllChildren()
 		st.plot.Pads:ClearAllChildren()
-		st.plot.OwnerSign.SurfaceGui.Owner.Text = "VACANT AIRBASE"
+		st.plot.OwnerSign.SurfaceGui.Owner.Text = "VACANT HANGAR"
 		plotOwners[index] = nil
 	end
 	states[player] = nil

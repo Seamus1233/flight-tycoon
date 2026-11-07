@@ -15,7 +15,7 @@ to the **F-35 Lightning II** and **F-22 Raptor**, then rebirth and do it again f
 | **Flyable aircraft** | Every aircraft you own can be flown from your runway (Hangar button) |
 | **Rebirths** | Unlocked by buying the F-22. Each one adds a permanent +50% income |
 | **Retention** | Vault with a 10-minute cap, daily streak reward, offline earnings, friend bonus, global leaderboard, guide beam to your next purchase |
-| **8 plots per server** | The whole map is generated in code, so there's no geometry to build by hand |
+| **8 plots per server** | Each plot is an enclosed arched hangar (aircraft bays, vault, spawn, Black Project showcase) opening onto its own airfield: apron, taxiways, a 430-stud runway with markings, edge lights and a windsock, with the facilities around it. All generated in code |
 
 ### Economy (from `python3 tools/generate.py`)
 

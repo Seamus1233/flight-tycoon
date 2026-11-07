@@ -2,8 +2,8 @@
 local Game = {}
 
 Game.MaxPlots = 8
-Game.PlotSize = Vector3.new(300, 1, 330)
-Game.PlotSpacing = 360
+Game.PlotSize = Vector3.new(440, 1, 560)
+Game.PlotSpacing = 480
 
 Game.IncomeTickSeconds = 1
 Game.VaultCapMinutes = 10            -- uncollected cash caps at this many minutes of income
